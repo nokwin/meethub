@@ -5,6 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "./input.component";
 import { signIn } from "next-auth/react";
+import Button from "./button.component";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -44,12 +45,9 @@ export default function SignInForm() {
         {...register("password")}
         error={errors.password?.message}
       />
-      <button
-        className="bg-[#F94D6A] px-4 py-2 border-0 rounded w-full text-white font-bold"
-        type="submit"
-      >
+      <Button fullWidth type="submit">
         Get access
-      </button>
+      </Button>
     </form>
   );
 }
