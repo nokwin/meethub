@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:15.3-alpine
+    # restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+
+  mongo:
+    image: mongo:6.0.5
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  cache:
+    image: redis:7.0-alpine
+    # restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 20 1 --loglevel warning
+
+  mailserver:
+    image: maildev/maildev:2.0.5
+    ports:
+      - "1080:1080"
+      - "1025:1025"
