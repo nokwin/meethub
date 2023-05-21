@@ -1,9 +1,7 @@
 "use server";
 
 import { config } from "@/core/config";
-import { authOptions } from "@/core/next-auth.config";
 import { prisma } from "@/core/prisma";
-import { getServerSession } from "next-auth";
 import { decode } from "next-auth/jwt";
 import { cookies } from "next/headers";
 import { getUserByEmail } from "./user";
@@ -46,4 +44,18 @@ export const createEvent = async (options: CreateEventOptions) => {
   });
 
   return event;
+};
+
+export const getAllEvents = () => {
+  return prisma.event.findMany();
+};
+
+export const getUserEvents = async (email: string) => {
+  return prisma.event.findMany({
+    where: {
+      user: {
+        email,
+      },
+    },
+  });
 };
