@@ -8,7 +8,7 @@ export default function Navbar() {
   const { data: session, status } = useSession();
 
   return (
-    <div className="bg-black/30">
+    <div className="bg-black/30 mb-8">
       <div className="container mx-auto py-8 flex justify-between">
         <Logo />
         {status === "loading" && <div>Loading...</div>}
