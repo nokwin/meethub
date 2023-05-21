@@ -17,4 +17,19 @@ model User {
   password   String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  events     Event[]
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  date        DateTime
+  banner      String
+  address     String
+  user_id     String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
 }
