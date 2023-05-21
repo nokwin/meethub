@@ -1,10 +1,10 @@
 import { getEventById } from "@/actions/event";
-import Button from "@/components/button.component";
 import Container from "@/components/container.component";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import EventDate from "@/components/event-date.component";
 import ButtonLink from "@/components/button-link.component";
+import DeleteEvent from "@/components/delete-event.component";
 
 interface EventPageParams {
   params: {
@@ -25,7 +25,7 @@ export default async function EventPage({ params }: EventPageParams) {
         <h1 className="text-white text-3xl">{event.title}</h1>
         <div className="flex gap-4">
           <ButtonLink href={`/events/${event.id}/edit`}>Edit</ButtonLink>
-          <Button>Delete</Button>
+          <DeleteEvent />
         </div>
       </div>
       <div className="w-full h-80 relative mb-8">

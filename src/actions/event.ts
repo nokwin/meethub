@@ -1,11 +1,7 @@
 "use server";
 
-import { config } from "@/core/config";
 import { prisma } from "@/core/prisma";
-import { decode } from "next-auth/jwt";
-import { cookies } from "next/headers";
 import { getUserFromSession } from "./auth";
-import { getUserByEmail } from "./user";
 
 interface CreateEventOptions {
   title: string;
@@ -95,4 +91,12 @@ export const updateEvent = async (options: UpdateEventOptions) => {
   });
 
   return event;
+};
+
+export const deleteEvent = (id: string) => {
+  return prisma.event.delete({
+    where: {
+      id,
+    },
+  });
 };
