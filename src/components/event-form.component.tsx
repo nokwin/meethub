@@ -1,10 +1,10 @@
 "use client";
 
-import { createEvent } from "@/actions/event";
+import { createEvent, updateEvent } from "@/actions/event";
 import useRendered from "@/hooks/use-rendered.hook";
 import { toBase64 } from "@/utils/files";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Button from "./button.component";
@@ -22,26 +22,58 @@ const createEventSchema = z.object({
 
 type CreateEventFormValues = z.infer<typeof createEventSchema>;
 
-export default function CreateEventForm() {
+interface CreateEventFormProps {
+  defaultValues?: CreateEventFormValues;
+  isUpdate?: boolean;
+}
+
+export default function CreateEventForm({
+  defaultValues,
+  isUpdate,
+}: CreateEventFormProps = {}) {
   const isRendered = useRendered();
+
+  const params = useParams();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setError,
   } = useForm<CreateEventFormValues>({
+    defaultValues,
     resolver: zodResolver(createEventSchema),
   });
 
   const router = useRouter();
   const onSubmit = handleSubmit(async (data) => {
-    const fileBase64 = await toBase64(data.banner[0]);
+    if (!data.banner) {
+      setError("banner", {
+        message: "Banner is required",
+      });
+      return;
+    }
 
-    await createEvent({
-      ...data,
-      banner: fileBase64,
-      date: new Date(data.date),
-    });
+    if (isUpdate) {
+      if (typeof data.banner !== "string") {
+        data.banner = await toBase64(data.banner[0]);
+      }
+
+      updateEvent({
+        ...data,
+        date: new Date(data.date),
+        banner: data.banner,
+        id: params.id,
+      });
+    } else {
+      const fileBase64 = await toBase64(data.banner[0]);
+
+      await createEvent({
+        ...data,
+        banner: fileBase64,
+        date: new Date(data.date),
+      });
+    }
 
     router.replace("/");
   });
@@ -52,6 +84,7 @@ export default function CreateEventForm() {
         {...register("banner")}
         error={errors.banner?.message as string}
         disabled={!isRendered}
+        defaultImage={defaultValues?.banner}
       />
       <Input
         placeholder="Event title"
@@ -75,7 +108,7 @@ export default function CreateEventForm() {
         error={errors.address?.message}
       />
       <Button type="submit" disabled={!isRendered || isSubmitting}>
-        Create event
+        {isUpdate ? "Update event" : "Create event"}
       </Button>
     </form>
   );

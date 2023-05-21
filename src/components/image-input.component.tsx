@@ -11,12 +11,13 @@ interface ImageInputProps {
   onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
   error?: string;
   disabled?: boolean;
+  defaultImage?: string;
 }
 
 const ImageInput = forwardRef<HTMLInputElement, ImageInputProps>(
-  function ImageInput({ error, disabled, ...inputProps }, ref) {
+  function ImageInput({ error, disabled, defaultImage, ...inputProps }, ref) {
     const inputRef = useForwardRef<HTMLInputElement>(ref);
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    const [imageUrl, setImageUrl] = useState<string | null>(defaultImage || null);
 
     const handleButtonClick = () => {
       inputRef.current?.click();

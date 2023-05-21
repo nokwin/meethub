@@ -1,10 +1,10 @@
 import Container from "@/components/container.component";
-import CreateEventForm from "@/components/create-event-form.component";
+import EventForm from "@/components/event-form.component";
 
 export default function CreateEventPage() {
   return (
     <Container>
-      <CreateEventForm />
+      <EventForm />
     </Container>
   );
 }

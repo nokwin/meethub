@@ -4,6 +4,7 @@ import { config } from "@/core/config";
 import { prisma } from "@/core/prisma";
 import { decode } from "next-auth/jwt";
 import { cookies } from "next/headers";
+import { getUserFromSession } from "./auth";
 import { getUserByEmail } from "./user";
 
 interface CreateEventOptions {
@@ -14,19 +15,7 @@ interface CreateEventOptions {
   address: string;
 }
 export const createEvent = async (options: CreateEventOptions) => {
-  const cookie = cookies().get("next-auth.session-token")?.value;
-
-  if (!cookie) {
-    throw new Error("You must be logged in to create an event");
-  }
-
-  const token = await decode({ token: cookie, secret: config.nextAuth.secret });
-
-  if (!token || !token.email) {
-    throw new Error("Invalid token");
-  }
-
-  const user = await getUserByEmail(token.email);
+  const user = await getUserFromSession();
 
   if (!user) {
     throw new Error("User not found");
@@ -66,4 +55,44 @@ export const getEventById = (id: string) => {
       id,
     },
   });
+};
+
+interface UpdateEventOptions extends CreateEventOptions {
+  id: string;
+}
+export const updateEvent = async (options: UpdateEventOptions) => {
+  const user = await getUserFromSession();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const oldEvent = await prisma.event.findUnique({
+    where: {
+      id: options.id,
+    },
+  });
+
+  if (!oldEvent) {
+    throw new Error("Event not found");
+  }
+
+  if (oldEvent.user_id !== user.id) {
+    throw new Error("User not authorized");
+  }
+
+  const event = await prisma.event.update({
+    where: {
+      id: options.id,
+    },
+    data: {
+      title: options.title,
+      description: options.description,
+      date: options.date,
+      banner: options.banner,
+      address: options.address,
+    },
+  });
+
+  return event;
 };
