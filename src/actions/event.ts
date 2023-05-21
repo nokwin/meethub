@@ -50,12 +50,20 @@ export const getAllEvents = () => {
   return prisma.event.findMany();
 };
 
-export const getUserEvents = async (email: string) => {
+export const getUserEvents = (email: string) => {
   return prisma.event.findMany({
     where: {
       user: {
         email,
       },
+    },
+  });
+};
+
+export const getEventById = (id: string) => {
+  return prisma.event.findUnique({
+    where: {
+      id,
     },
   });
 };
