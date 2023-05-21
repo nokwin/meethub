@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "./input.component";
+import { signIn } from "next-auth/react";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -22,7 +23,11 @@ export default function SignInForm() {
   });
 
   const onSubmit = handleSubmit((data) => {
-    console.log(data);
+    signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      callbackUrl: "/",
+    });
   });
 
   return (
